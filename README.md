@@ -1,34 +1,65 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<img src="https://uploadthing.com/f/80e50706-0ed4-4616-aeb1-f6cb3c98b80f-1e.png"/>
+<img src="https://uploadthing.com/f/4c40c359-d715-4c0d-9a7d-3a0ac84212c2-1d.png"/>
+<img src="https://uploadthing.com/f/6565edc5-9357-4a97-87f2-037fc107c24c-1b4.png"/>
 
-## Getting Started
+## Demo
 
-First, run the development server:
+https://files-manager-krisu720.vercel.app/
+
+---
+
+<h5>If you dont want to make account you can use demo credentials:</h5>
+
+email:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+demo@demo.com
+```
+password:
+
+```bash
+demo12345
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Used Technologies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Prisma](https://www.prisma.io/)
+- [Radix-ui](https://www.radix-ui.com/)
+- [bcrypt](https://www.npmjs.com/package/bcrypt)
+- [next-auth](https://next-auth.js.org/)
+- [shadcn-ui](https://ui.shadcn.com/)
+- [lucide-react](https://lucide.dev/guide/packages/lucide-react)
+- [uuid](https://www.npmjs.com/package/uuid)
+- [zod](https://github.com/colinhacks/zod)
+- [tailwind](https://tailwindcss.com/)
+- [trpc](https://trpc.io/)
+- [react-hook-form](https://react-hook-form.com/)
+- [next-themes](https://www.npmjs.com/package/next-themes)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Installation
+1.First clone repository or download from github.
+```
+git clone https://github.com/Krisu720/files-manager
+```
+2.Then install missing packages using node.
+```
+pnpm install
+```
+3.Create .env file which includes:
+```
+DATABASE_URL=#mysql link#
+NEXTAUTH_SECRET=#random letters secret#
+NEXTAUTH_URL=#default url for example http://localhost:3000/#
+BCRYPT_SALTS=*salts number (13 suggested)*
+```
+4.Migrate prisma database.
+```
+npx prisma migrate dev
+```
 
-## Learn More
+5.After installation run development server.
+```
+pnpm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

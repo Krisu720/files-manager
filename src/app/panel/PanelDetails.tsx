@@ -142,7 +142,7 @@ const PanelDetails: FC<PanelDetailsProps> = ({}) => {
           </h1>
         </div>
         <h1 className="mt-2 text-muted-foreground text-sm inline-flex gap-1 items-center">
-          <FileWarning className="h-6 w-6" /> You can't create the folder if you
+          <FileWarning className="h-6 w-6" /> You can&apos;t create the folder if you
           exceed the limit.
         </h1>
         <Progress
@@ -269,7 +269,7 @@ const PanelDetails: FC<PanelDetailsProps> = ({}) => {
                     Do you really want to delete the folder?
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    You can't restore the deleted folder with its files.
+                    You can&apos;t restore the deleted folder with its files.
                   </AlertDialogDescription>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
