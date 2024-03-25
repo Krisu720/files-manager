@@ -29,8 +29,27 @@ export const foldersRouter = router({
 
       return withoutPassword;
     }),
+  getUserFolder: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const folder = await prisma.folder.findUnique({
+        where: { id: input.id },
+        include: { files: true },
+      });
+      if (!folder) throw new TRPCError({ code: "NOT_FOUND" });
+      const user = await prisma.user.findUnique({
+        where: { id: folder.userId },
+      });
+      if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (ctx.session.user.userId !== user.id)
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const { password, ...withoutPassword } = folder;
+
+      return withoutPassword;
+    }),
   getUserFolders: protectedProcedure.query(async ({ ctx }) => {
-    const folders = await ctx.db.folder.findMany({
+    const folders = await prisma.folder.findMany({
       where: { userId: ctx.session.user.userId },
       include: { files: true },
     });
@@ -65,7 +84,6 @@ export const foldersRouter = router({
           acc + folder.files.reduce((acc, file) => acc + file.size, 0),
         0
       );
-      
 
       let totalSize = 0;
 
@@ -73,7 +91,8 @@ export const foldersRouter = router({
         totalSize += size;
       }
 
-      if(foldersSize + totalSize > 20000000) throw new TRPCError({code:"PAYLOAD_TOO_LARGE"});
+      if (foldersSize + totalSize > 20000000)
+        throw new TRPCError({ code: "PAYLOAD_TOO_LARGE" });
 
       const folder = await prisma.folder.create({
         data: {

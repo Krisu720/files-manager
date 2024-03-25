@@ -1,84 +1,75 @@
 import useMounted from "@/hooks/use-mounted";
 import { useEffect, useRef } from "react";
-
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 const CodeInput = ({
-  value,
-  setValue,
   onComplete,
+  isError,
 }: {
-  value: [string, string, string, string];
-  setValue: React.Dispatch<
-    React.SetStateAction<[string, string, string, string]>
-  >;
-  onComplete?: () => void;
+  isError: boolean;
+  onComplete: (password: string) => void;
 }) => {
-  const mounted = useMounted();
-  const firstInput = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const formSchema = z.object({
+    pin: z.string(),
+  });
 
-  useEffect(() => {
-    if (mounted) firstInput.current?.focus();
-  }, [mounted]);
+  type FormSchema = z.infer<typeof formSchema>;
 
-  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const prevElement = e.currentTarget
-      .previousElementSibling as HTMLInputElement | null;
-    const nextElement = e.currentTarget
-      .nextElementSibling as HTMLInputElement | null;
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      pin: "",
+    },
+  });
 
-    if (prevElement && e.key === "Backspace") {
-      prevElement.focus();
-    } else if (e.currentTarget.value.length > 0) {
-      if (nextElement) nextElement.focus();
-      else typeof onComplete !== "undefined" && onComplete();
-    }
+  if (isError) {
+    form.setValue("pin", "");
+  }
+  const onCompleteHandle = () => {
+    if (formRef.current) formRef.current.requestSubmit();
+  };
+
+  const handleSubmit = async (data: FormSchema) => {
+    onComplete(data.pin);
   };
 
   return (
-    <>
-      <input
-        ref={firstInput}
-        className="w-16 bg-transparent border rounded-xl h-20 text-center text-5xl"
-        type="text"
-        onKeyUp={(e) => handleKeyUp(e)}
-        onChange={(e) =>
-          setValue((prev) => [e.target.value, prev[1], prev[2], prev[3]])
-        }
-        value={value[0]}
-        maxLength={1}
-      />
-      <input
-        className="w-16 bg-transparent border rounded-xl h-20 text-center text-5xl"
-        type="text"
-        onKeyUp={(e) => handleKeyUp(e)}
-        onChange={(e) =>
-          setValue((prev) => [prev[0], e.target.value, prev[2], prev[3]])
-        }
-        value={value[1]}
-        maxLength={1}
-      />
-      <input
-        className="w-16 bg-transparent border rounded-xl h-20 text-center text-5xl"
-        type="text"
-        onKeyUp={(e) => handleKeyUp(e)}
-        onChange={(e) =>
-          setValue((prev) => [prev[0], prev[1], e.target.value, prev[3]])
-        }
-        value={value[2]}
-        maxLength={1}
-      />
-      <input
-        className="w-16 bg-transparent border rounded-xl h-20 text-center text-5xl"
-        type="text"
-        onKeyUp={(e) => {
-          handleKeyUp(e);
-        }}
-        onChange={(e) =>
-          setValue((prev) => [prev[0], prev[1], prev[2], e.target.value])
-        }
-        value={value[3]}
-        maxLength={1}
-      />
-    </>
+    <Form {...form} >
+
+      <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit)}>
+        <FormField
+          control={form.control}
+          name="pin"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <InputOTP
+                  autoFocus
+                  maxLength={4}
+                  onComplete={onCompleteHandle}
+                  render={({ slots }) => (
+                    <InputOTPGroup>
+                      {slots.map((slot, index) => (
+                        <InputOTPSlot key={index} {...slot} />
+                      ))}{" "}
+                    </InputOTPGroup>
+                  )}
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
   );
 };
 

@@ -20,7 +20,7 @@ import {
   Loader2,
   Trash2,
 } from "lucide-react";
-import { FC, useState } from "react";
+import { FC, Suspense, useState } from "react";
 import { trpc } from "../_trpc/client";
 import { convertDate, convertToMB } from "@/lib/utils";
 import {
@@ -142,8 +142,8 @@ const PanelDetails: FC<PanelDetailsProps> = ({}) => {
           </h1>
         </div>
         <h1 className="mt-2 text-muted-foreground text-sm inline-flex gap-1 items-center">
-          <FileWarning className="h-6 w-6" /> You can&apos;t create the folder if you
-          exceed the limit.
+          <FileWarning className="h-6 w-6" /> You can&apos;t create the folder
+          if you exceed the limit.
         </h1>
         <Progress
           value={Math.round((getTotalSize() / 20) * 100)}
@@ -215,84 +215,87 @@ const PanelDetails: FC<PanelDetailsProps> = ({}) => {
         </Dialog>
       </div>
       <div className="grid xl:grid-cols-6 md:grid-cols-5 sm:grid-cols-4 grid-cols-2  my-4 gap-2">
-        {data?.map((item) => (
-          <div
-            key={item.id}
-            className="border p-6 rounded-xl flex flex-col items-center gap-2 select-none"
-          >
-            <Building2 className="h-12 w-12" />
-            <div className="flex flex-col items-start">
-              <p className="text-muted-foreground text-sm">
-                {convertDate(item.createdAt)}
-              </p>
-              <h1>{item.name}</h1>
-              <h1 className="text-xs text-muted-foreground">
-                {convertToMB(
-                  item.files.reduce((total, file) => (total += file.size), 0)
-                ) === 0
-                  ? "0.01>"
-                  : convertToMB(
-                      item.files.reduce(
-                        (total, file) => (total += file.size),
-                        0
-                      )
-                    )}{" "}
-                MB
-              </h1>
+        <Suspense fallback={<h1>loading</h1>}>
+          {data?.map((item) => (
+            <div
+              key={item.id}
+              className="border p-6 rounded-xl flex flex-col items-center gap-2 select-none"
+            >
+              <Building2 className="h-12 w-12" />
+              <div className="flex flex-col items-start">
+                <p className="text-muted-foreground text-sm">
+                  {convertDate(item.createdAt)}
+                </p>
+                <h1>{item.name}</h1>
+                <h1 className="text-xs text-muted-foreground">
+                  {convertToMB(
+                    item.files.reduce((total, file) => (total += file.size), 0)
+                  ) === 0
+                    ? "0.01>"
+                    : convertToMB(
+                        item.files.reduce(
+                          (total, file) => (total += file.size),
+                          0
+                        )
+                      )}{" "}
+                  MB
+                </h1>
+              </div>
+              <div className="flex gap-1">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="icon" variant="outline">
+                      <Eye />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>Pin</DialogHeader>
+                    <DialogDescription>
+                      Hover cursor over the blurred field to reveal the pin.
+                    </DialogDescription>
+                    <div className="relative hover:border-primary border flex justify-center items-center h-40 transition-colors">
+                      <div className="backdrop-blur-md hover:backdrop-blur-0 absolute inset-0 " />
+                      <h1 className="text-2xl">{item.password}</h1>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                <AlertDialog key={item.id}>
+                  <AlertDialogTrigger asChild>
+                    <Button size="icon" variant="destructive">
+                      <Trash2 />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogTitle>
+                      Do you really want to delete the folder?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You can&apos;t restore the deleted folder with its files.
+                    </AlertDialogDescription>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleRemoveFolder(item.id)}
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
-            <div className="flex gap-1">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="icon" variant="outline">
-                    <Eye />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>Pin</DialogHeader>
-                  <DialogDescription>
-                    Hover cursor over the blurred field to reveal the pin.
-                  </DialogDescription>
-                  <div className="relative hover:border-primary border flex justify-center items-center h-40 transition-colors">
-                    <div className="backdrop-blur-md hover:backdrop-blur-0 absolute inset-0 " />
-                    <h1 className="text-2xl">{item.password}</h1>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              <AlertDialog key={item.id}>
-                <AlertDialogTrigger asChild>
-                  <Button size="icon" variant="destructive">
-                    <Trash2 />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogTitle>
-                    Do you really want to delete the folder?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    You can&apos;t restore the deleted folder with its files.
-                  </AlertDialogDescription>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => handleRemoveFolder(item.id)}
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </div>
-        ))}
-        {data?.length === 0 && (
-          <span className="text-muted-foreground text-xl">No folders</span>
-        )}
+          ))}
+          {data?.length === 0 && (
+            <span className="text-muted-foreground text-xl">No folders</span>
+          )}
+        </Suspense>
       </div>
     </>
   );
 };
 
 export default PanelDetails;
+
 
 // {/* <div
 // key={item.id}

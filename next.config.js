@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    typescript: {
-        ignoreBuildErrors: true,
-      },
-}
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  webpack: (config) => {
+    config.resolve.alias.canvas = false;
 
-module.exports = nextConfig
+    return config;
+  },
+};
+
+module.exports = nextConfig;
