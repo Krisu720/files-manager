@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "postgresql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
@@ -13,11 +13,10 @@ model File {
   name      String
   type      String
   size      Int
-  base64    String   
+  base64    String
   folderId  String
   createdAt DateTime @default(now())
   Folder    Folder   @relation(fields: [folderId], references: [id])
-
 
   @@index([folderId])
 }
@@ -31,7 +30,6 @@ model Folder {
   updatedAt DateTime @updatedAt
   author    User     @relation(fields: [userId], references: [id])
   files     File[]
-
 
   @@index([userId])
 }
