@@ -83,7 +83,6 @@ const LoginForm: FC<LoginFormProps> = ({}) => {
       <Button className="mt-2" disabled={loading}>
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Log in"}
       </Button>
-      <Link href="/register" className={cn(buttonVariants({className:"mt-6",variant: "link"}))}>Dont have an account? Sign up!</Link>
     </form>
   );
 };

@@ -91,7 +91,7 @@ export const foldersRouter = router({
         totalSize += size;
       }
 
-      if (foldersSize + totalSize > 20000000)
+      if (foldersSize + totalSize > 500000000)
         throw new TRPCError({ code: "PAYLOAD_TOO_LARGE" });
 
       const folder = await prisma.folder.create({

@@ -100,7 +100,7 @@ const PanelDetails: FC<PanelDetailsProps> = ({}) => {
               : "Error",
           description:
             e.message === "PAYLOAD_TOO_LARGE"
-              ? " Max 20MB per account."
+              ? " Max 500MB per account."
               : undefined,
           variant: "destructive",
         });
@@ -137,7 +137,7 @@ const PanelDetails: FC<PanelDetailsProps> = ({}) => {
           <h1 className="font-bold text-2xl">
             {getTotalSize()}MB
             <span className="text-muted-foreground md:text-lg text-sm ml-2">
-              /20MB
+              /500MB
             </span>
           </h1>
         </div>
@@ -146,7 +146,7 @@ const PanelDetails: FC<PanelDetailsProps> = ({}) => {
           if you exceed the limit.
         </h1>
         <Progress
-          value={Math.round((getTotalSize() / 20) * 100)}
+          value={Math.round((getTotalSize() / 500) * 100)}
           className="mt-2"
         />
       </div>
